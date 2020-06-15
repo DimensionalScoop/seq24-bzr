@@ -1,0 +1,135 @@
+diff --unified --recursive --text trunk.old/src/midibus.h trunk.new/src/midibus.h
+--- trunk.old/src/midibus.h	2020-06-14 23:42:37.154770374 -0500
++++ trunk.new/src/midibus.h	2020-06-14 23:49:03.940269789 -0500
+@@ -91,9 +91,9 @@
+ 
+ 
+     /* locking */
+-    mutex m_mutex;
++    my_mutex m_mutex;
+ 
+-    /* mutex */
++    /* my_mutex */
+     void lock();
+     void unlock();
+ 
+@@ -209,9 +209,9 @@
+     sequence *m_seq;
+ 
+     /* locking */
+-    mutex m_mutex;
++    my_mutex m_mutex;
+ 
+-    /* mutex */
++    /* my_mutex */
+     void lock();
+     void unlock();
+ 
+diff --unified --recursive --text trunk.old/src/midibus_portmidi.h trunk.new/src/midibus_portmidi.h
+--- trunk.old/src/midibus_portmidi.h	2020-06-14 23:42:37.154770374 -0500
++++ trunk.new/src/midibus_portmidi.h	2020-06-14 23:49:03.940269789 -0500
+@@ -65,9 +65,9 @@
+     long m_lasttick;
+ 
+     /* locking */
+-    mutex m_mutex;
++    my_mutex m_mutex;
+ 
+-    /* mutex */
++    /* my_mutex */
+     void lock();
+     void unlock();
+ 
+@@ -164,9 +164,9 @@
+     sequence *m_seq;
+ 
+     /* locking */
+-    mutex m_mutex;
++    my_mutex m_mutex;
+ 
+-    /* mutex */
++    /* my_mutex */
+     void lock();
+     void unlock();
+ 
+diff --unified --recursive --text trunk.old/src/mutex.cpp trunk.new/src/mutex.cpp
+--- trunk.old/src/mutex.cpp	2020-06-14 23:42:37.154770374 -0500
++++ trunk.new/src/mutex.cpp	2020-06-14 23:55:43.450275689 -0500
+@@ -20,23 +20,23 @@
+ 
+ #include "mutex.h"
+ 
+-const pthread_mutex_t mutex::recmutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
++const pthread_mutex_t my_mutex::recmutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+ const pthread_cond_t condition_var::cond  = PTHREAD_COND_INITIALIZER;
+ 
+-mutex::mutex( )
++my_mutex::my_mutex( )
+ {
+     m_mutex_lock = recmutex;
+ }
+ 
+ void
+-mutex::lock( )
++my_mutex::lock( )
+ {
+     pthread_mutex_lock( &m_mutex_lock );
+ }
+ 
+ 
+ void
+-mutex::unlock( )
++my_mutex::unlock( )
+ {
+     pthread_mutex_unlock( &m_mutex_lock );
+ }
+diff --unified --recursive --text trunk.old/src/mutex.h trunk.new/src/mutex.h
+--- trunk.old/src/mutex.h	2020-06-14 23:42:37.154770374 -0500
++++ trunk.new/src/mutex.h	2020-06-14 23:49:03.940269789 -0500
+@@ -24,7 +24,7 @@
+ 
+ #include <pthread.h>
+ 
+-class mutex {
++class my_mutex {
+ 
+ private:
+ 
+@@ -37,14 +37,14 @@
+ 
+ public:
+ 
+-    mutex();
++    my_mutex();
+ 
+     void lock();
+     void unlock();
+ 
+ };
+ 
+-class condition_var : public mutex {
++class condition_var : public my_mutex {
+ 
+ private:
+ 
+diff --unified --recursive --text trunk.old/src/sequence.h trunk.new/src/sequence.h
+--- trunk.old/src/sequence.h	2020-06-14 23:42:37.154770374 -0500
++++ trunk.new/src/sequence.h	2020-06-14 23:49:03.943603123 -0500
+@@ -153,7 +153,7 @@
+     long m_rec_vol;
+ 
+     /* locking */
+-    mutex m_mutex;
++    my_mutex m_mutex;
+ 
+     /* used to idenfity which events are ours in the out queue */
+     //unsigned char m_tag;
+@@ -167,7 +167,7 @@
+ 
+     void remove_all ();
+ 
+-    /* mutex */
++    /* my_mutex */
+     void lock ();
+     void unlock ();
+ 
